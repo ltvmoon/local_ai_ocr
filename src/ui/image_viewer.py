@@ -33,6 +33,7 @@ class ImageViewer(QGraphicsView):
         self.current_image_size = (qt_img.width(), qt_img.height())
         pixmap = QPixmap.fromImage(qt_img)
         self.pixmap_item = self.scene.addPixmap(pixmap)
+        self.scene.setSceneRect(QRectF(pixmap.rect()))
         self.fit_content()
 
     def draw_box(self, coords, color=None):
@@ -91,8 +92,8 @@ class ImageViewer(QGraphicsView):
 
     def fit_content(self):
         # Scale view to fit entire scene content.
-        if self.scene.itemsBoundingRect().width() > 0:
-            self.fitInView(self.scene.itemsBoundingRect(), Qt.KeepAspectRatio)
+        if self.scene.sceneRect().width() > 0:
+            self.fitInView(self.scene.sceneRect(), Qt.KeepAspectRatio)
 
     def resizeEvent(self, event):
         # Re-fit content when widget is resized.
