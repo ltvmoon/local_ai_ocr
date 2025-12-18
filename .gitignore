@@ -4,9 +4,8 @@
 /python/
 __pycache__/
 /test/
-/python.zip
+/*.zip
 /get-pip.py
-/ollama-windows-amd64.zip
 /sha256sum.txt
 /TODO
 /.vscode/

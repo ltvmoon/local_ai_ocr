@@ -278,6 +278,9 @@ graph TD
 - **CPU-Only Mode:** `run_cpu-only.cmd`
 - **CPU-Only Mode (+ Logging):** `run_cpu-only_wlog.cmd`
 
+## Packaging
+- Execute `make_release.cmd` to create release zip.
+
 ## Debloating `src/res/node/mathjax` and `src/res/node/@mathjax/mathjax-newcm-font`
 ```
 ./core.js
