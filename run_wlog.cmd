@@ -21,4 +21,5 @@ echo Stopping Ollama...
 taskkill /F /IM ollama.exe
 
 endlocal
+echo.
 pause

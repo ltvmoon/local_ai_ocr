@@ -200,6 +200,7 @@ taskkill /F /IM ollama.exe >nul 2>&1
 echo.
 echo INFO: Environment setup complete.
 echo You can now run 'run.cmd' or 'run_cpu-only.cmd'.
+echo.
 pause
 exit /b 0
 
@@ -210,6 +211,7 @@ REM ============================================================
 echo.
 echo FATAL: Network request failed.
 echo Please check your internet connection and try again.
+echo.
 pause
 exit /b 1
 
@@ -218,17 +220,20 @@ echo.
 echo FATAL: Failed to extract Python.
 echo The downloaded zip might be corrupt. 
 echo The script will delete it automatically on the next run.
+echo.
 pause
 exit /b 1
 
 :ERROR_PIP
 echo.
 echo FATAL: Pip installation or Package install failed.
+echo.
 pause
 exit /b 1
 
 :ERROR_OLLAMA_INSTALL
 echo.
 echo FATAL: Ollama installation failed.
+echo.
 pause
 exit /b 1
