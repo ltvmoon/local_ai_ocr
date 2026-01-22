@@ -1,9 +1,9 @@
 @echo off
 setlocal enabledelayedexpansion
 
-REM ============================================================
-REM CONFIGURATION
-REM ============================================================
+@REM ============================================================
+@REM CONFIGURATION
+@REM ============================================================
 set "SCRIPTROOT=%~dp0"
 
 set "WGET_BIN=%SCRIPTROOT%bin\wget.exe"
@@ -27,9 +27,9 @@ set "OLLAMA_BIN=%OLLAMA_DIR%\ollama.exe"
 set "OLLAMA_HOST=http://127.0.0.1:11435"
 set "OLLAMA_MODELS=%SCRIPTROOT%models"
 
-REM ============================================================
-REM 1. CHECK & INSTALL PYTHON
-REM ============================================================
+@REM ============================================================
+@REM 1. CHECK & INSTALL PYTHON
+@REM ============================================================
 echo [1/6] Checking Python environment...
 
 if exist "%PYTHON_BIN%" (
@@ -37,7 +37,7 @@ if exist "%PYTHON_BIN%" (
 ) else (
     echo - Python missing or incomplete. Starting download...
 
-    REM Clean up partial downloads from previous failed runs
+    @REM Clean up partial downloads from previous failed runs
     if exist "%PYTHON_ZIP%" (
         echo - Found leftover %PYTHON_ZIP%. Deleting to ensure fresh download...
         del "%PYTHON_ZIP%"
@@ -57,19 +57,19 @@ if exist "%PYTHON_BIN%" (
     del "%PYTHON_ZIP%"
 )
 
-REM Double check that extraction actually worked
+@REM Double check that extraction actually worked
 if not exist "%PYTHON_BIN%" goto :ERROR_EXTRACT
 
-REM ============================================================
-REM 2. CONFIGURE ._pth FILE
-REM ============================================================
+@REM ============================================================
+@REM 2. CONFIGURE ._pth FILE
+@REM ============================================================
 echo [2/6] Configuring %PYTHON_PTH%...
-REM This is safe to run repeatedly; it simply replaces the string if found.
+@REM This is safe to run repeatedly; it simply replaces the string if found.
 powershell -ExecutionPolicy Bypass -Command "(Get-Content '%PYTHON_PTH%') -replace '#import site', 'import site' | Set-Content '%PYTHON_PTH%'"
 
-REM ============================================================
-REM 3. INSTALL PIP
-REM ============================================================
+@REM ============================================================
+@REM 3. INSTALL PIP
+@REM ============================================================
 echo [3/6] Checking for pip...
 
 if exist "%PYTHON_DIR%\Scripts\pip.exe" (
@@ -77,7 +77,7 @@ if exist "%PYTHON_DIR%\Scripts\pip.exe" (
 ) else (
     echo - pip not found.
 
-    REM Clean up partial get-pip.py
+    @REM Clean up partial get-pip.py
     if exist "get-pip.py" del "get-pip.py"
 
     echo - Downloading get-pip.py...
@@ -93,11 +93,11 @@ if exist "%PYTHON_DIR%\Scripts\pip.exe" (
     del "get-pip.py"
 )
 
-REM ============================================================
-REM 4. INSTALL REQUIREMENTS
-REM ============================================================
+@REM ============================================================
+@REM 4. INSTALL REQUI@REMENTS
+@REM ============================================================
 echo [4/6] Installing requirements...
-REM Pip handles partially installed packages automatically.
+@REM Pip handles partially installed packages automatically.
 if exist "%SCRIPTROOT%requirements.txt" (
     "%PYTHON_BIN%" -m pip install -r "%SCRIPTROOT%requirements.txt" --no-warn-script-location
     if !errorlevel! neq 0 goto :ERROR_PIP
@@ -108,25 +108,25 @@ if exist "%SCRIPTROOT%requirements.txt" (
     exit /b 1
 )
 
-REM ============================================================
-REM 5. DOWNLOAD Ollama
-REM ============================================================
+@REM ============================================================
+@REM 5. DOWNLOAD Ollama
+@REM ============================================================
 echo [5/6] Downloading Ollama...
 if exist "%OLLAMA_BIN%" (
     echo - Ollama found in %OLLAMA_DIR%. Skipping download.
 ) else (
-    REM Download checksum file
+    @REM Download checksum file
     echo - Downloading checksums...
     echo.
     "%WGET_BIN%" -q --show-progress -O sha256sum.txt "%OLLAMA_CHECKSUM_URL%"
     echo.
     if !errorlevel! neq 0 goto :ERROR_NETWORK
 
-    REM Extract expected hash
+    @REM Extract expected hash
     set "EXPECTED_HASH="
     for /f "tokens=1" %%h in ('findstr "%OLLAMA_ZIP%" sha256sum.txt') do set "EXPECTED_HASH=%%h"
 
-    REM Verify existing zip if present
+    @REM Verify existing zip if present
     if exist "%OLLAMA_ZIP%" (
         if defined EXPECTED_HASH (
             echo - Found %OLLAMA_ZIP%. Verifying checksum...
@@ -142,7 +142,7 @@ if exist "%OLLAMA_BIN%" (
         )
     )
 
-    REM Download if missing
+    @REM Download if missing
     if not exist "%OLLAMA_ZIP%" (
         echo - Downloading %OLLAMA_ZIP%...
         echo.
@@ -150,7 +150,7 @@ if exist "%OLLAMA_BIN%" (
         echo.
         if !errorlevel! neq 0 goto :ERROR_NETWORK
 
-        REM Verify downloaded file
+        @REM Verify downloaded file
         if defined EXPECTED_HASH (
             set "FILE_HASH="
             for /f "usebackq tokens=*" %%g in (`powershell -Command "(Get-FileHash '%OLLAMA_ZIP%' -Algorithm SHA256).Hash.ToLower()"`) do set "FILE_HASH=%%g"
@@ -162,22 +162,22 @@ if exist "%OLLAMA_BIN%" (
         )
     )
 
-    REM Cleanup checksum file
+    @REM Cleanup checksum file
     if exist "sha256sum.txt" del "sha256sum.txt"
 
     echo - Extracting to %OLLAMA_DIR%...
     powershell -ExecutionPolicy Bypass -Command "Expand-Archive -Path '%OLLAMA_ZIP%' -DestinationPath '%OLLAMA_DIR%' -Force"
     if !errorlevel! neq 0 goto :ERROR_OLLAMA_INSTALL
 
-    REM Clean up zip
+    @REM Clean up zip
     del "%OLLAMA_ZIP%"
 
     if not exist "%OLLAMA_BIN%" goto :ERROR_OLLAMA_INSTALL
 )
 
-REM ============================================================
-REM 6. DOWNLOAD MODEL
-REM ============================================================
+@REM ============================================================
+@REM 6. DOWNLOAD MODEL
+@REM ============================================================
 echo [6/6] Downloading DeepSeek-OCR Model...
 
 echo Starting Ollama...
@@ -204,9 +204,9 @@ echo.
 pause
 exit /b 0
 
-REM ============================================================
-REM ERROR HANDLERS
-REM ============================================================
+@REM ============================================================
+@REM ERROR HANDLERS
+@REM ============================================================
 :ERROR_NETWORK
 echo.
 echo FATAL: Network request failed.
